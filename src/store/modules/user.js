@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { logout, getInfo, register, authToken, resetpass, forget } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -6,7 +6,8 @@ const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    avatar: '',
+    id: ''
   }
 }
 
@@ -22,6 +23,9 @@ const mutations = {
   SET_NAME: (state, name) => {
     state.name = name
   },
+  SET_ID: (state, id) => {
+    state.id = id
+  },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
   }
@@ -30,12 +34,31 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { username, password } = userInfo
+    const { username, password, code, remember } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
+      authToken({ username: username.trim(), password: password, code: code, rememberme: remember }).then(response => {
         const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        console.log(data)
+        commit('SET_TOKEN', data.accessToken)
+        commit('SET_NAME', data.user.username)
+        commit('SET_AVATAR', data.user.headerUrl)
+        commit('SET_ID', data.user.id)
+        setToken(data.accessToken)
+        resolve(response)
+        console.log('resolve')
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  authToken({ commit }, data) {
+    return new Promise((resolve, reject) => {
+      authToken(data).then(response => {
+        console.log(response.token)
+        console.log(response)
+        commit('SET_TOKEN', response.token)
+        setToken(response.token)
         resolve()
       }).catch(error => {
         reject(error)
@@ -43,6 +66,17 @@ const actions = {
     })
   },
 
+  register({ commit }, userInfo) {
+    // const { username, password } = userInfo
+    return new Promise((resolve, reject) => {
+      console.log(userInfo)
+      register(userInfo).then(response => {
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
@@ -53,11 +87,33 @@ const actions = {
           return reject('Verification failed, please Login again.')
         }
 
-        const { name, avatar } = data
-
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
+        // commit('SET_TOKEN', data.accessToken)
+        commit('SET_NAME', data.user.username)
+        commit('SET_AVATAR', data.user.headerUrl)
+        commit('SET_ID', data.user.id)
         resolve(data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  forget({ commit }, data) {
+    // const { username, password } = userInfo
+    return new Promise((resolve, reject) => {
+      forget(data).then(response => {
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  resetpass({ commit }, data) {
+    // const { username, password } = userInfo
+    return new Promise((resolve, reject) => {
+      resetpass(data).then(response => {
+        resolve(response)
       }).catch(error => {
         reject(error)
       })
@@ -67,11 +123,11 @@ const actions = {
   // user logout
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
+      logout(state.token).then(response => {
         removeToken() // must remove  token  first
         resetRouter()
         commit('RESET_STATE')
-        resolve()
+        resolve(response)
       }).catch(error => {
         reject(error)
       })
@@ -80,6 +136,7 @@ const actions = {
 
   // remove token
   resetToken({ commit }) {
+    console.log('in resetToken')
     return new Promise(resolve => {
       removeToken() // must remove  token  first
       commit('RESET_STATE')

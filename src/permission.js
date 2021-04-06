@@ -8,7 +8,7 @@ import getPageTitle from '@/utils/get-page-title'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const whiteList = ['/login'] // no redirect whitelist
+const whiteList = ['/login', '/register', '/activation', '/resetpass', '/forget'] // no redirect whitelist
 
 router.beforeEach(async(to, from, next) => {
   // start progress bar
@@ -19,14 +19,16 @@ router.beforeEach(async(to, from, next) => {
 
   // determine whether the user has logged in
   const hasToken = getToken()
-
   if (hasToken) {
-    if (to.path === '/login') {
+    if (to.path === '/login' || to.path === '/register' || to.path === '/activation' || to.path === '/resetpass' || to.path === '/forget') {
       // if is logged in, redirect to the home page
       next({ path: '/' })
       NProgress.done()
     } else {
       const hasGetUserInfo = store.getters.name
+      console.log('name')
+      console.log(store.getters.name)
+      console.log(store.getters.token)
       if (hasGetUserInfo) {
         next()
       } else {
@@ -36,6 +38,8 @@ router.beforeEach(async(to, from, next) => {
 
           next()
         } catch (error) {
+          console.log('in permission.js:try reset token')
+          console.log('in catch', error)
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')
           Message.error(error || 'Has Error')

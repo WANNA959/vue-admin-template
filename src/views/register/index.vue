@@ -1,19 +1,16 @@
 <template>
-  <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
+  <div class="register-container">
+    <el-form ref="registerForm" :model="registerForm" :rules="registerRules" class="register-form" autocomplete="on" label-position="left" >
 
       <div class="title-container">
-        <h3 class="title">Login</h3>
+        <h3 class="title">Register</h3>
       </div>
 
-      <el-form-item prop="username">
-        <span class="svg-container">
-          <svg-icon icon-class="user" />
-        </span>
+      <el-form-item prop="username" label="账号" label-width="80px">
         <el-input
           ref="username"
-          v-model="loginForm.username"
-          placeholder="admin"
+          v-model="registerForm.username"
+          placeholder=""
           name="username"
           type="text"
           tabindex="1"
@@ -21,49 +18,59 @@
         />
       </el-form-item>
 
-      <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
-        <el-form-item prop="password">
-          <span class="svg-container">
-            <svg-icon icon-class="password" />
-          </span>
-          <el-input
-            :key="passwordType"
-            ref="password"
-            v-model="loginForm.password"
-            :type="passwordType"
-            placeholder="password"
-            name="password"
-            tabindex="2"
-            autocomplete="on"
-            @keyup.native="checkCapslock"
-            @blur="capsTooltip = false"
-            @keyup.enter.native="handleLogin"
-          />
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-          </span>
-        </el-form-item>
-      </el-tooltip>
+      <el-form-item prop="password" label="密码" label-width="80px">
+        <el-input
+          :key="passwordType"
+          ref="password"
+          v-model="registerForm.password"
+          :type="passwordType"
+          placeholder=""
+          name="password"
+          tabindex="2"
+          autocomplete="on"
+          @keyup.enter.native="handleRegister"
+        />
+      </el-form-item>
+
+      <el-form-item prop="checkPassword" label="确认密码" label-width="80px">
+        <el-input
+          ref="checkPassword"
+          v-model="registerForm.checkPassword"
+          :type="passwordType"
+          placeholder=""
+          name="checkPassword"
+          tabindex="3"
+          autocomplete="on"
+          @keyup.enter.native="handleRegister"
+        />
+      </el-form-item>
+
+      <el-form-item prop="email" label="邮箱" label-width="80px">
+        <el-input
+          ref="email"
+          v-model="registerForm.email"
+          type="email"
+          placeholder=""
+          name="email"
+          tabindex="4"
+          autocomplete="on"
+          @keyup.enter.native="handleRegister"
+        />
+      </el-form-item>
 
       <el-row>
         <el-col :span="12" >
-          <el-form-item prop="code" >
-            <el-col :span="12" style="width: 18%">
-              <span class="svg-container">
-                <svg-icon icon-class="verify2" />
-              </span>
-            </el-col>
-            <el-col :span="12" >
+          <el-form-item prop="code" label="验证码" label-width="80px">
+            <el-col :span="24" >
               <el-input
-                :key="codeType"
                 ref="code"
-                v-model="loginForm.code"
+                v-model="registerForm.code"
                 type="text"
-                placeholder="验证码"
+                placeholder=""
                 name="code"
-                tabindex="3"
+                tabindex="5"
                 autocomplete="on"
-                @keyup.enter.native="handleLogin"
+                @keyup.enter.native="handleRegister"
               />
             </el-col>
           </el-form-item>
@@ -80,14 +87,12 @@
         </el-col>
       </el-row>
 
-      <el-checkbox v-model="loginForm.remember" style="margin-left: 10px">30天免登录</el-checkbox>
-      <a href="#/forget" class="forget" >忘记密码？</a>
       <div>
         <el-col :span="12">
-          <el-button :loading="loading" type="primary" style="width:90%;margin-left: 5%" @click.native.prevent="handleLogin">登录</el-button>
+          <el-button type="primary" style="width:90%;margin-left: 5%" @click.native.prevent="handleRegister('registerForm')">注册</el-button>
         </el-col>
         <el-col :span="12">
-          <el-button type="primary" style="width:90%;margin-left: 5%" @click.native.prevent="handleRegister">注册</el-button>
+          <el-button type="primary" style="width:90%;margin-left: 5%" @click.native.prevent="handleReset('registerForm')">重置</el-button>
         </el-col>
       </div>
 
@@ -117,7 +122,7 @@
 import { getVerifySrcApi } from '@/api/user'
 
 export default {
-  name: 'Login',
+  name: 'Register',
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!value) {
@@ -129,9 +134,33 @@ export default {
     const validatePassword = (rule, value, callback) => {
       if (!value) {
         return callback(new Error('请输入密码'))
+      } else if (value.length < 6) {
+        callback(new Error('密码长度需不小于6位'))
       } else {
         callback()
       }
+    }
+    const validatePassword2 = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('请再次确认密码'))
+      } else if (value !== this.registerForm.password) {
+        return callback(new Error('两次输入密码不一致'))
+      } else {
+        callback()
+      }
+    }
+    const validateEmail = (rule, value, callback) => {
+      const mailReg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/
+      if (!value) {
+        return callback(new Error('请输入邮箱'))
+      }
+      setTimeout(() => {
+        if (mailReg.test(value)) {
+          callback()
+        } else {
+          callback(new Error('请输入正确的邮箱格式'))
+        }
+      }, 100)
     }
     const validateCode = (rule, value, callback) => {
       if (!value) {
@@ -143,25 +172,26 @@ export default {
       }
     }
     return {
-      loginForm: {
+      registerForm: {
         username: '',
         password: '',
-        code: '',
-        remember: false
+        checkPassword: '',
+        email: '',
+        code: ''
       },
       verifyCode: '',
-      loginRules: {
+      registerRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        checkPassword: [{ required: true, trigger: 'blur', validator: validatePassword2 }],
+        email: [{ required: true, trigger: 'blur', validator: validateEmail }],
         code: [{ required: true, trigger: 'blur', validator: validateCode }]
       },
       passwordType: 'password',
       codeType: 'code',
-      capsTooltip: false,
       loading: false,
       showDialog: false,
-      redirect: undefined,
-      otherQuery: {}
+      redirect: undefined
     }
   },
   watch: {
@@ -170,7 +200,6 @@ export default {
         const query = route.query
         if (query) {
           this.redirect = query.redirect
-          this.otherQuery = this.getOtherQuery(query)
         }
       },
       immediate: true
@@ -184,10 +213,16 @@ export default {
     })
   },
   mounted() {
-    if (this.loginForm.username === '') {
+    if (this.registerForm.username === '') {
       this.$refs.username.focus()
-    } else if (this.loginForm.password === '') {
+    } else if (this.registerForm.password === '') {
       this.$refs.password.focus()
+    } else if (this.registerForm.checkPassword === '') {
+      this.$refs.checkPassword.focus()
+    } else if (this.registerForm.email === '') {
+      this.$refs.email.focus()
+    } else if (this.registerForm.code === '') {
+      this.$refs.code.focus()
     }
   },
   destroyed() {
@@ -195,66 +230,60 @@ export default {
   },
   methods: {
     getVerifySrc() {
-      console.log('in method')
       getVerifySrcApi().then(response => {
         // 这里也是关键,调用window的这个方法URL方法
         this.verifyCode = window.URL.createObjectURL(response)
       })
     },
-    checkCapslock({ shiftKey, key } = {}) {
-      if (key && key.length === 1) {
-        if (shiftKey && (key >= 'a' && key <= 'z') || !shiftKey && (key >= 'A' && key <= 'Z')) {
-          this.capsTooltip = true
-        } else {
-          this.capsTooltip = false
-        }
-      }
-      if (key === 'CapsLock' && this.capsTooltip === true) {
-        this.capsTooltip = false
-      }
-    },
-    showPwd() {
-      if (this.passwordType === 'password') {
-        this.passwordType = ''
-      } else {
-        this.passwordType = 'password'
-      }
-      this.$nextTick(() => {
-        this.$refs.password.focus()
-      })
-    },
-    handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
+    handleRegister(registerForm) {
+      this.$refs[registerForm].validate(valid => {
+        console.log(valid)
+        // todo  valid
+        if (valid || !valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm)
+          this.$store.dispatch('user/register', this.registerForm)
             .then(response => {
               console.log(response)
+              // 若成功，跳转到登录页面
               if (response.code === 200) {
-                this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-                this.loading = false
-                // authToken(this.loginForm)
+                this.$message({
+                  message: response.message,
+                  type: 'success',
+                  duration: 10000
+                })
+                setTimeout(() => {
+                  this.$router.push({ path: this.redirect || '/' })
+                }, 3000)
+              } else {
+                this.$message({
+                  message: response.message,
+                  type: 'error',
+                  duration: 10000
+                })
+                return false
               }
+              this.loading = false
             })
             .catch(() => {
               this.loading = false
             })
         } else {
+          this.$message({
+            message: '参数错误，请检查输入参数',
+            type: 'warning'
+          })
           console.log('error submit!!')
           return false
         }
       })
     },
-    handleRegister() {
-      this.$router.push({ path: '/register' })
-    },
-    getOtherQuery(query) {
-      return Object.keys(query).reduce((acc, cur) => {
-        if (cur !== 'redirect') {
-          acc[cur] = query[cur]
-        }
-        return acc
-      }, {})
+    handleReset(registerForm) {
+      this.$refs[registerForm].resetFields()
+      this.$refs.username.focus()
+      this.$message({
+        message: '重置成功',
+        type: 'success'
+      })
     }
     // afterQRScan() {
     //   if (e.key === 'x-admin-oauth-code') {
@@ -266,7 +295,7 @@ export default {
     //     const type = codeMap[this.auth_type]
     //     const codeName = code[type]
     //     if (codeName) {
-    //       this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
+    //       this.$store.dispatch('registerByThirdparty', codeName).then(() => {
     //         this.$router.push({ path: this.redirect || '/' })
     //       })
     //     } else {
@@ -287,17 +316,22 @@ $light_gray:#fff;
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-  .login-container .el-input input {
+  .register-container .el-input input {
     color: $cursor;
   }
 }
 
 /* reset element-ui css */
-.login-container {
+.register-container {
   .el-input {
     display: inline-block;
     height: 47px;
-    width: 85%;
+    width: 100%;
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    color: #454545;
 
     input {
       background: transparent;
@@ -316,12 +350,15 @@ $cursor: #fff;
     }
   }
 
-  .el-form-item {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    color: #454545;
-  }
+  //.el-form-item {
+  //  //border: 1px solid rgba(255, 255, 255, 0.1);
+  //  //background: rgba(0, 0, 0, 0.1);
+  //  background: $bg;
+  //  border-radius: 5px;
+  //  //color: #454545;
+  //  color: $bg;
+  //}
+
 }
 </style>
 
@@ -330,26 +367,19 @@ $bg:#2d3a4b;
 $dark_gray:#889aa4;
 $light_gray:#eee;
 
-.login-container {
+.register-container {
   min-height: 100%;
   width: 100%;
   background-color: $bg;
   overflow: hidden;
 
-  .login-form {
+  .register-form {
     position: relative;
     width: 400px;
     max-width: 100%;
     padding: 160px 35px 0;
     margin: 0 auto;
     overflow: hidden;
-  }
-
-  .forget{
-    color: #606266;
-    font-weight: 500;
-    font-size: 14px;
-    margin-left: 70px;
   }
 
   .tips {

@@ -34,6 +34,41 @@ export const constantRoutes = [
   {
     path: '/login',
     component: () => import('@/views/login/index'),
+    meta: {
+      title: '登录'
+    },
+    hidden: true
+  },
+  {
+    path: '/register',
+    component: () => import('@/views/register/index'),
+    meta: {
+      title: '注册'
+    },
+    hidden: true
+  },
+  {
+    path: '/activation',
+    component: () => import('@/views/register/activation'),
+    meta: {
+      title: '账号激活'
+    },
+    hidden: true
+  },
+  {
+    path: '/resetpass',
+    component: () => import('@/views/register/resetpass'),
+    meta: {
+      title: '重置密码'
+    },
+    hidden: true
+  },
+  {
+    path: '/forget',
+    component: () => import('@/views/register/forget'),
+    meta: {
+      title: '忘记密码'
+    },
     hidden: true
   },
 
@@ -43,6 +78,7 @@ export const constantRoutes = [
     hidden: true
   },
 
+  // 侧边栏
   {
     path: '/',
     component: Layout,
@@ -56,23 +92,53 @@ export const constantRoutes = [
   },
 
   {
-    path: '/example',
+    path: '/code',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'el-icon-s-help' },
+    redirect: '/code/mybatis',
+    name: 'Code',
+    alwaysShow: true,
+    meta: { title: '自动生成代码', icon: 'el-icon-s-help' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
+        path: 'mybatis',
+        name: 'Mybatis',
+        component: () => import('@/views/code/index'),
+        meta: { title: '数据库连接信息', icon: 'table' }
       },
       {
         path: 'tree',
         name: 'Tree',
         component: () => import('@/views/tree/index'),
         meta: { title: 'Tree', icon: 'tree' }
+      },
+      {
+        path: 'history',
+        name: 'istory',
+        component: () => import('@/views/code/history'),
+        meta: { title: '导出文件历史', icon: 'excel' }
+      }
+    ]
+  },
+
+  {
+    path: '/doc',
+    component: Layout,
+    redirect: '/doc/index',
+    name: 'Doc',
+    alwaysShow: true,
+    meta: { title: '自动生成文档', icon: 'el-icon-s-help' },
+    children: [
+      {
+        path: 'db',
+        name: 'DB',
+        component: () => import('@/views/doc/index'),
+        meta: { title: 'DB', icon: 'table' }
+      },
+      {
+        path: 'history',
+        name: 'History',
+        component: () => import('@/views/doc/history'),
+        meta: { title: 'History', icon: 'tree' }
       }
     ]
   },
@@ -85,7 +151,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'Form',
         component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        meta: { title: 'Form', icon: 'form', affix: true }
       }
     ]
   },
@@ -152,14 +218,20 @@ export const constantRoutes = [
   {
     path: 'external-link',
     component: Layout,
+    meta: { title: '源码库', icon: 'el-icon-link' },
     children: [
       {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
+        path: 'https://github.com/WANNA959/work-platform',
+        name: 'backend',
+        meta: { title: '后端项目', icon: 'guide' }
+      },
+      {
+        path: 'https://github.com/WANNA959/vue-admin-template',
+        name: 'frontend',
+        meta: { title: '前端项目', icon: 'link' }
       }
     ]
   },
-
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
