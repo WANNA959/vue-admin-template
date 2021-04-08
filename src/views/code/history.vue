@@ -23,9 +23,9 @@ export default {
     return {
       tabMapOptions: [
         { label: 'Mybatis代码', key: 'mybatis' },
-        { label: '数据库文档', key: 'dbdoc' },
-        { label: 'Japan', key: 'JP' },
-        { label: 'Eurozone', key: 'EU' }
+        { label: '数据库文档', key: 'dbdoc' }
+        // { label: 'Japan', key: 'JP' },
+        // { label: 'Eurozone', key: 'EU' }
       ],
       activeName: 'mybatis',
       createdTimes: 0,
