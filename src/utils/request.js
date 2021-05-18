@@ -64,7 +64,6 @@ service.interceptors.response.use(
           cancelButtonText: 'Cancel',
           type: 'warning'
         }).then(() => {
-          // todo 404应该重置token？
           // store.dispatch('user/resetToken').then(() => {
           //   location.reload()
           // })
