@@ -120,28 +120,28 @@ export const constantRoutes = [
     ]
   },
 
-  {
-    path: '/doc',
-    component: Layout,
-    redirect: '/doc/index',
-    name: 'Doc',
-    alwaysShow: true,
-    meta: { title: '自动生成文档', icon: 'el-icon-s-help' },
-    children: [
-      {
-        path: 'db',
-        name: 'DB',
-        component: () => import('@/views/doc/index'),
-        meta: { title: 'DB', icon: 'table' }
-      },
-      {
-        path: 'history',
-        name: 'History',
-        component: () => import('@/views/doc/history'),
-        meta: { title: 'History', icon: 'tree' }
-      }
-    ]
-  },
+  // {
+  //   path: '/doc',
+  //   component: Layout,
+  //   redirect: '/doc/index',
+  //   name: 'Doc',
+  //   alwaysShow: true,
+  //   meta: { title: '自动生成文档', icon: 'el-icon-s-help' },
+  //   children: [
+  //     {
+  //       path: 'db',
+  //       name: 'DB',
+  //       component: () => import('@/views/doc/index'),
+  //       meta: { title: 'DB', icon: 'table' }
+  //     },
+  //     {
+  //       path: 'history',
+  //       name: 'History',
+  //       component: () => import('@/views/doc/history'),
+  //       meta: { title: 'History', icon: 'tree' }
+  //     }
+  //   ]
+  // },
 
   // {
   //   path: '/form',

@@ -11,8 +11,8 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             style="margin-right: 50px"
-            align="right">
-          </el-date-picker>
+            align="right"
+          />
         </el-form-item>
         <el-form-item label="更新时间范围">
           <el-date-picker
@@ -22,8 +22,8 @@
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
-            align="right">
-          </el-date-picker>
+            align="right"
+          />
         </el-form-item>
       </el-row>
       <el-row>
@@ -39,10 +39,10 @@
         <el-form-item label="表名" style="margin-left: 50px">
           <el-input v-model="listQuery.table" placeholder="Title" style="width: 200px;" class="filter-item" @keyup.enter.native="getList" />
         </el-form-item>
-        <el-button v-waves class="filter-item" type="primary" style="float: right;margin-right: 15px" icon="el-icon-search" @click="getList" >
+        <el-button v-waves class="filter-item" type="primary" style="float: right;margin-right: 15px" icon="el-icon-search" @click="getList">
           搜索
         </el-button>
-        <el-button  @click="dialogFormVisible = true" type="success" style="float: right;margin-right: 15px" icon="el-icon-download">导入数据库</el-button>
+        <el-button type="success" style="float: right;margin-right: 15px" icon="el-icon-download" @click="dialogFormVisible = true">导入数据库</el-button>
       </el-row>
     </el-form>
     <el-table
@@ -74,27 +74,26 @@
         <template slot-scope="scope">
           <span>
             <el-tag
-              :key="table"
               v-for="table in paramJson(scope.row.tables)"
+              :key="table"
               :closable="scope.row.edit"
               :disable-transitions="false"
-              @close="handleClose(table,scope.row)"
               style="margin-left: 5px"
+              @close="handleClose(table,scope.row)"
             >
               {{ table }}
             </el-tag>
             <el-input
-              class="input-new-tag"
               v-if="scope.row.edit && scope.row.inputVisible"
-              v-model="scope.row.inputValue"
               ref="saveTagInput"
+              v-model="scope.row.inputValue"
+              class="input-new-tag"
               size="small"
               @keyup.enter.native="handleInputConfirm(scope.row)"
               @blur="handleInputConfirm(scope.row)"
-            >
-            </el-input>
+            />
             <el-button v-else-if="scope.row.edit && !scope.row.inputVisible" class="button-new-tag" size="small" @click="showInput(scope.row)">New Table</el-button>
-<!--            <el-tag v-for="table in paramJson(scope.row.tables)" :key="table" style="margin-left: 5px">{{ table }}</el-tag>-->
+            <!--            <el-tag v-for="table in paramJson(scope.row.tables)" :key="table" style="margin-left: 5px">{{ table }}</el-tag>-->
           </span>
         </template>
       </el-table-column>
@@ -130,9 +129,9 @@
           {{ scope.row.updateTime }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="360" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="520" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-<!--          @click="handleEdit(row)"-->
+          <!--          @click="handleEdit(row)"-->
           <el-button v-if="row.edit" type="success" size="mini" @click="confirmEdit(row)">
             OK
           </el-button>
@@ -142,7 +141,13 @@
           <el-button size="mini" type="danger" @click="handleDelete(row)">
             删除
           </el-button>
-          <el-button type="primary" size="mini" @click="handleGenerate(row)">
+          <el-button type="primary" size="mini" @click="handleExport(row)">
+            全部导出
+          </el-button>
+          <el-button type="primary" size="mini" @click="handleBatchInsert(row)">
+            批量导入
+          </el-button>
+          <el-button type="primary" size="mini" @click="beforeHandleGenerate(row)">
             生成代码
           </el-button>
           <el-button type="primary" size="mini" @click="handleGenerate2(row)">
@@ -153,37 +158,37 @@
     </el-table>
     <div class="block" style="margin-top: 20px">
       <el-pagination
-        @current-change="handleCurrentChange"
         background
         :current-page="this.listQuery.pageNum"
         :page-size="10"
         layout="total, prev, pager, next, jumper"
-        :total="this.total">
-      </el-pagination>
+        :total="this.total"
+        @current-change="handleCurrentChange"
+      />
     </div>
 
     <el-dialog title="添加新数据库" :visible.sync="dialogFormVisible" align="center">
       <el-form :model="form" :rules="formRules">
         <el-form-item prop="dbName" label="数据库名称" :label-width="formLabelWidth">
-          <el-input v-model="form.dbName" autocomplete="off"></el-input>
+          <el-input v-model="form.dbName" autocomplete="off" />
         </el-form-item>
         <el-form-item prop="dbComment" label="描述" :label-width="formLabelWidth">
-          <el-input v-model="form.dbComment" autocomplete="off"></el-input>
+          <el-input v-model="form.dbComment" autocomplete="off" />
         </el-form-item>
         <el-form-item prop="tables" label="表名" :label-width="formLabelWidth">
-          <el-input v-model="form.tables" autocomplete="off"></el-input>
+          <el-input v-model="form.tables" autocomplete="off" />
         </el-form-item>
         <el-form-item prop="host" label="主机名" :label-width="formLabelWidth">
-          <el-input v-model="form.host" autocomplete="off"></el-input>
+          <el-input v-model="form.host" autocomplete="off" />
         </el-form-item>
         <el-form-item prop="port" label="端口" :label-width="formLabelWidth">
-          <el-input v-model="form.port" autocomplete="off"></el-input>
+          <el-input v-model="form.port" autocomplete="off" />
         </el-form-item>
         <el-form-item prop="username" label="用户名" :label-width="formLabelWidth">
-          <el-input v-model="form.username" autocomplete="off"></el-input>
+          <el-input v-model="form.username" autocomplete="off" />
         </el-form-item>
         <el-form-item prop="password" label="密码" :label-width="formLabelWidth">
-          <el-input v-model="form.password" autocomplete="off"></el-input>
+          <el-input v-model="form.password" autocomplete="off" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -191,13 +196,58 @@
         <el-button type="primary" @click="handleInsert">确 定</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="选择导入的数据表和数据文件" :visible.sync="dialogFormVisible2" align="center">
+      <el-row>
+        <el-select v-model="optionValue" placeholder="请选择">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-row>
+      <el-row style="margin-top: 20px">
+        <el-upload
+          class="upload-demo"
+          action="111"
+          :on-preview="handlePreview"
+          :on-remove="handleRemove"
+          :before-remove="beforeRemove"
+          :limit="1"
+          :on-exceed="handleExceed"
+          :http-request="httpRequest"
+          accept=".csv"
+          :file-list="fileList"
+        >
+          <el-button size="small" type="primary">点击上传</el-button>
+          <div slot="tip" class="el-upload__tip">只能上传csv文件</div>
+        </el-upload>
+      </el-row>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleBatchInsert2">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="选择生成代码类型" :visible.sync="dialogFormVisible3" align="center" width="60%">
+      <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+      <div style="margin: 15px 0;"></div>
+      <el-checkbox-group v-model="checkedtype" @change="handleCheckedCitiesChange">
+          <el-checkbox v-for="city in codeType" :label="city" :key="city">{{city}}</el-checkbox>
+      </el-checkbox-group>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible3 = false">取 消</el-button>
+        <el-button type="primary" @click="handleGenerate(codeRow,checkedtype)">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-
 import { parseTime, paramJson, dateFormat } from '@/utils/index'
-import { deleteDbItem, updateDbItem, fetchDbList, generatorMybatis, insertDbItem, generatorDbDoc } from '@/api/code'
+import { deleteDbItem, updateDbItem, fetchDbList, batchInsert, batchExport, generatorMybatis, insertDbItem, generatorDbDoc } from '@/api/code'
 
 export default {
   name: 'Mybatis',
@@ -251,6 +301,7 @@ export default {
         callback()
       }
     }
+    const typeOptions = ['model.java', 'dao.java', 'service.java', 'serviceImpl.java', 'controller.java', 'mapper.xml']
     return {
       pickerOptions: {
         shortcuts: [{
@@ -281,6 +332,11 @@ export default {
       },
       value: [],
       value2: [],
+      fileList: [],
+      options: [],
+      optionId: '',
+      optionValue: '',
+      optionFile: null,
       list: null,
       listQuery: {
         pageNum: 1,
@@ -300,6 +356,13 @@ export default {
       total: 0,
       filename: '',
       dialogFormVisible: false,
+      dialogFormVisible2: false,
+      dialogFormVisible3: false,
+      codeRow: [],
+      checkAll: false,
+      checkedtype: ['model.java', 'mapper.xml'],
+      codeType: typeOptions,
+      isIndeterminate: true,
       form: {
         dbName: '',
         dbComment: '',
@@ -387,8 +450,92 @@ export default {
         }
       })
     },
-    handleGenerate(row) {
-      const params = { id: row.id, username: row.username, password: row.password, host: row.host, port: row.port, database: row.dbName, tables: row.tables }
+    handleExport(row) {
+      const params = { id: row.id }
+      batchExport(params).then(response => {
+        console.log(response)
+        if (response.code === 200) {
+          this.$message({
+            message: '导出成功，请于db数据导出记录中下载',
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: response.message,
+            type: 'error'
+          })
+        }
+      })
+    },
+    handleBatchInsert(row) {
+      this.dialogFormVisible2 = true
+      const list = paramJson(row.tables)
+      this.options = []
+      this.optionId = ''
+      this.optionValue = ''
+      this.fileList = []
+      for (var i = 0; i < list.length; i++) {
+        var table = list[i]
+        var tmp = { value: table, label: table }
+        this.options.push(tmp)
+      }
+      this.optionId = row.id
+    },
+    httpRequest(item) {
+      this.optionFile = item.file
+    },
+    handleBatchInsert2() {
+      const params = new FormData()
+      params.append('id', this.optionId)
+      params.append('table', this.optionValue)
+      params.append('file', this.optionFile)
+      // const params = { id: this.optionId, table: this.optionValue, file: this.optionFile }
+      batchInsert(params).then(response => {
+        console.log(response)
+        if (response.code === 200) {
+          this.$message({
+            message: response.message,
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: response.message,
+            type: 'error'
+          })
+        }
+      })
+    },
+    beforeRemove(file, fileList) {
+      return this.$confirm(`确定移除 ${file.name}？`)
+    },
+    handleRemove() {
+      // this.fileList = []
+    },
+    handlePreview(file) {
+      console.log(file)
+    },
+    handleExceed(files, fileList) {
+      this.$message.warning(`当前限制选择 1 个文件，若上传新文件，请先删除已上传文件`)
+    },
+    handleCheckAllChange(val) {
+      this.checkedtype = val ? this.codeType : []
+      this.isIndeterminate = false
+    },
+    handleCheckedCitiesChange(value) {
+      const checkedCount = value.length
+      this.checkAll = checkedCount === this.codeType.length
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.codeType.length
+    },
+    beforeHandleGenerate(data) {
+      this.codeRow = data
+      this.dialogFormVisible3 = true
+    },
+    handleGenerate(row, type) {
+      // const tableList = paramJson(row.tables)
+      // console.log(tableList)
+      this.dialogFormVisible3 = false
+      // const params = { id: row.id, username: row.username, password: row.password, host: row.host, port: row.port, database: row.dbName, tables: row.tables, codeType: JSON.stringify(type) }
+      const params = { id: row.id, codeType: JSON.stringify(type) }
       generatorMybatis(params).then(response => {
         console.log(response)
         if (response.code === 200) {
@@ -405,7 +552,8 @@ export default {
       })
     },
     handleGenerate2(row) {
-      const params = { id: row.id, username: row.username, password: row.password, host: row.host, port: row.port, database: row.dbName }
+      // const params = { id: row.id, username: row.username, password: row.password, host: row.host, port: row.port, database: row.dbName }
+      const params = { id: row.id }
       generatorDbDoc(params).then(response => {
         if (response.code === 200) {
           this.$message({

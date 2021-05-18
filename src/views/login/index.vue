@@ -61,7 +61,7 @@
                 type="text"
                 placeholder="验证码"
                 name="code"
-                tabindex="3"
+                tabindex="3"F
                 autocomplete="on"
                 @keyup.enter.native="handleLogin"
               />
@@ -80,7 +80,7 @@
         </el-col>
       </el-row>
 
-      <el-checkbox v-model="loginForm.remember" style="margin-left: 10px">30天免登录</el-checkbox>
+      <el-checkbox v-model="loginForm.remember" style="margin-left: 10px">7天免登录</el-checkbox>
       <a href="#/forget" class="forget" >忘记密码？</a>
       <div>
         <el-col :span="12">

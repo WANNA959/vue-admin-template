@@ -226,8 +226,10 @@ export default {
         let fileName
         if (this.listQuery.type === 'mybatis') {
           fileName = 'mybatis-code.zip'
-        } else if(this.listQuery.type === 'dbdoc') {
+        } else if (this.listQuery.type === 'dbdoc') {
           fileName = 'database-doc.zip'
+        } else if (this.listQuery.type === 'data') {
+          fileName = 'database-data.zip'
         }
         aLink.href = window.URL.createObjectURL(blob)
         aLink.setAttribute('download', fileName)

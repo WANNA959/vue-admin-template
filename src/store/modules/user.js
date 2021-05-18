@@ -43,7 +43,7 @@ const actions = {
         commit('SET_NAME', data.user.username)
         commit('SET_AVATAR', data.user.headerUrl)
         commit('SET_ID', data.user.id)
-        setToken(data.accessToken)
+        setToken(data.accessToken, data.expire)
         resolve(response)
         console.log('resolve')
       }).catch(error => {
